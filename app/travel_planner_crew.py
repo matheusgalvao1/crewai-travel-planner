@@ -1,3 +1,4 @@
+import os
 import yaml
 from crewai import Agent, Task, Crew, Process
 from crewai.project import CrewBase, agent, crew, task
@@ -10,15 +11,19 @@ from custom_search_tool import CustomSearchTool
 class TravelPlannerCrew:
     """A crew for planning travel itineraries with web search and scraping capabilities"""
     
-    agents_config = 'config/agents.yaml'
-    tasks_config = 'config/tasks.yaml'
+    # Get the directory of the current file
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Get the path to configuration files
+    agents_config_path = os.path.join(base_dir, "config", "agents.yaml")
+    tasks_config_path = os.path.join(base_dir, "config", "tasks.yaml")
     
     def __init__(self):
         # Load configurations from YAML files
-        with open(self.agents_config, 'r') as file:
+        with open(self.agents_config_path, 'r') as file:
             self.agents_data = yaml.safe_load(file)
             
-        with open(self.tasks_config, 'r') as file:
+        with open(self.tasks_config_path, 'r') as file:
             self.tasks_data = yaml.safe_load(file)
             
         # Initialize tools
@@ -65,7 +70,7 @@ class TravelPlannerCrew:
         return Task(
             config=self.tasks_data["research_task"],
             agent=self.researcher(),
-            output_schema=Attraction
+            output_pydantic=Attraction
         )
     
     @task
@@ -84,5 +89,5 @@ class TravelPlannerCrew:
             config=self.tasks_data["planning_task"],
             agent=self.planner(),
             context=[self.research_task(), self.local_insights_task()],
-            output_pydantic=TravelItinerary
+            output_pydantic=TravelItinerary  # Outputs a Pydantic object, if you want to use a JSON, use output_json
         )
