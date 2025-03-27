@@ -3,8 +3,8 @@ import yaml
 from crewai import Agent, Task, Crew, Process
 from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import ScrapeWebsiteTool
-from models import TravelItinerary
-from custom_search_tool import CustomSearchTool
+from travel_planner.models.travel_itinerary import TravelItinerary
+from travel_planner.tools.custom_search_tool import CustomSearchTool
 
 @CrewBase
 class TravelPlannerCrew:
