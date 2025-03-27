@@ -1,25 +1,17 @@
 research_task:
   description: |
-    Research the top {num_attractions} attractions in {city} and provide detailed information.
-    1. First search for popular attractions in {city}
-    2. For each attraction, scrape its official website to get accurate details about opening hours, address, etc.
-    3. Compile the information into structured data
-  expected_output: "A detailed list of {num_attractions} attractions in {city} with accurate information based on official sources."
-  
-local_insights_task:
-  description: |
-    Research local customs, etiquette, and cultural norms for {city}.
-    1. Search for information about important cultural practices in {city}
-    2. Scrape travel advisory websites for tips on local etiquette
-    3. Provide a summary of the most important cultural aspects travelers should be aware of
-  expected_output: "A comprehensive guide to local customs and etiquette in {city} that will help travelers avoid cultural faux pas."
+    Research the top {num_attractions} attractions in {city} and gather local customs and cultural insights.
+    1. Search for popular attractions and local customs in {city}.
+    2. Scrape official websites and travel advisories for details such as opening hours, addresses, and cultural tips.
+    3. Compile the information into structured data.
+  expected_output: "A combined list of {num_attractions} attractions with detailed information and local cultural insights for {city}."
   
 planning_task:
   description: |
-    Create a {days}-day itinerary for {city} using the researched attractions and cultural insights.
+    Create a {days}-day itinerary for {city} using the combined research data.
     Include:
-    1. A logical sequence of attractions for each day
-    2. Transportation recommendations between locations
-    3. Meal suggestions with respect to local dining customs
-    4. Important cultural considerations for each activity
+    1. A logical sequence of attractions for each day.
+    2. Transportation recommendations between locations.
+    3. Meal suggestions with respect to local dining customs.
+    4. Important cultural considerations for each activity.
   expected_output: "A detailed {days}-day schedule with timing, transportation tips, meal suggestions, and cultural guidance."
