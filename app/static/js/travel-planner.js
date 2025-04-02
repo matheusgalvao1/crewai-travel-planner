@@ -15,7 +15,7 @@ document.getElementById('tripForm').addEventListener('submit', async function(e)
         });
 
         const data = await response.json();
-        console.log('Response data:', data); // Debug log
+        console.log('Response data:', data);
         
         if (response.ok && data) {
             // Display the itinerary
@@ -24,15 +24,27 @@ document.getElementById('tripForm').addEventListener('submit', async function(e)
                 data.daily_plans.forEach((day, index) => {
                     html += `
                         <div class="day-plan mb-4">
-                            <h6>Day ${index + 1}</h6>
+                            <h6>Day ${day.day_number}</h6>
                             <ul class="list-group">
                                 ${day.attractions.map(attraction => `
                                     <li class="list-group-item">
                                         <strong>${attraction.name}</strong><br>
+                                        <small class="text-muted">${attraction.category} • ${attraction.estimated_duration}</small><br>
+                                        ${attraction.address ? `<small class="text-muted">${attraction.address}</small><br>` : ''}
                                         ${attraction.description}
                                     </li>
                                 `).join('')}
                             </ul>
+                            ${day.meal_suggestions ? `
+                                <div class="mt-2">
+                                    <small class="text-muted">Meal Suggestions:</small>
+                                    <ul class="list-unstyled">
+                                        ${day.meal_suggestions.map(suggestion => `
+                                            <li>• ${suggestion}</li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
                         </div>
                     `;
                 });
@@ -62,7 +74,7 @@ document.getElementById('tripForm').addEventListener('submit', async function(e)
             `;
         }
     } catch (error) {
-        console.error('Error:', error); // Debug log
+        console.error('Error:', error);
         document.getElementById('resultsContent').innerHTML = `
             <div class="alert alert-danger">
                 An error occurred while planning your trip. Please try again.

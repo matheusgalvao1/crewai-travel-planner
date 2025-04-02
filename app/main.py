@@ -13,7 +13,10 @@ def plan_trip():
         # Get form data
         city = request.form.get('city')
         days = int(request.form.get('days'))
-        num_attractions = int(request.form.get('num_attractions'))
+        attractions_per_day = int(request.form.get('attractions_per_day'))
+
+        # Calculate total attractions needed
+        total_attractions = days * attractions_per_day
 
         # Create the crew and run it
         try:
@@ -21,7 +24,8 @@ def plan_trip():
             result = travel_crew.travel_crew().kickoff(inputs={
                 "city": city,
                 "days": days,
-                "num_attractions": num_attractions
+                "attractions_per_day": attractions_per_day,
+                "total_attractions": total_attractions
             })
         except Exception as e:
             return jsonify({"error": f"Error generating travel plan: {str(e)}"}), 500

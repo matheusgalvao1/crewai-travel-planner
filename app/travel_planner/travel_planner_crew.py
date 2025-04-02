@@ -1,10 +1,13 @@
 import os
 import yaml
+from typing import List
 from crewai import Agent, Task, Crew, Process
 from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import ScrapeWebsiteTool
+from travel_planner.models.attraction import Attraction
 from travel_planner.models.travel_itinerary import TravelItinerary
 from travel_planner.tools.custom_search_tool import CustomSearchTool
+
 
 @CrewBase
 class TravelPlannerCrew:
@@ -22,24 +25,13 @@ class TravelPlannerCrew:
             self.tasks_data = yaml.safe_load(file)
             
         self.search_tool = CustomSearchTool()
-        self.web_scrape_tool = ScrapeWebsiteTool()
-
-    @crew
-    def travel_crew(self) -> Crew:
-        """Creates the simplified travel planning crew"""
-        return Crew(
-            agents=self.agents,
-            tasks=self.tasks,
-            process=Process.sequential,
-            verbose=False
-        )
-    
+        self.scrape_tool = ScrapeWebsiteTool()
     @agent
     def researcher(self) -> Agent:
         """Creates a researcher agent that gathers attraction data and local cultural insights"""
         return Agent(
             config=self.agents_data["researcher"],
-            tools=[self.search_tool, self.web_scrape_tool]
+            tools=[self.search_tool, self.scrape_tool]
         )
     
     @agent
@@ -55,8 +47,8 @@ class TravelPlannerCrew:
         """Creates a combined research task for attractions and local insights"""
         return Task(
             config=self.tasks_data["research_task"],
-            agent=self.researcher()
-            # Optionally, you could specify an output model if you create one (e.g., CombinedResearch)
+            agent=self.researcher(),
+            output_schema=List[Attraction]
         )
     
     @task
@@ -66,5 +58,15 @@ class TravelPlannerCrew:
             config=self.tasks_data["planning_task"],
             agent=self.planner(),
             context=[self.research_task()],
-            output_pydantic=TravelItinerary  # Validates the final itinerary output
+            output_pydantic=TravelItinerary
+        )
+    
+    @crew
+    def travel_crew(self) -> Crew:
+        """Creates the travel planning crew"""
+        return Crew(
+            agents=self.agents,
+            tasks=self.tasks,
+            process=Process.sequential,
+            verbose=True
         )
