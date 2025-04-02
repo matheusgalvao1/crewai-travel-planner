@@ -4,8 +4,7 @@ research_task:
     1. Search for popular attractions and local customs in {city}.
     2. Scrape official websites and travel advisories for details such as opening hours, addresses, and cultural tips.
     3. Compile the information into structured data.
-    3. Important: Return EXACTLY {total_attractions} attraction(s), no more and no less.
-  expected_output: "A combined list of {total_attractions} attraction(s) with detailed information and local cultural insights for {city}."
+  expected_output: "A combined list of exactly {total_attractions} attraction(s) with detailed information and local cultural insights for {city}."
   
 planning_task:
   description: |
