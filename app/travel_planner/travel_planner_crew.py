@@ -4,7 +4,6 @@ from typing import List
 from crewai import Agent, Task, Crew, Process
 from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import ScrapeWebsiteTool
-from travel_planner.models.attraction import Attraction
 from travel_planner.models.travel_itinerary import TravelItinerary
 from travel_planner.tools.custom_search_tool import CustomSearchTool
 
@@ -47,8 +46,7 @@ class TravelPlannerCrew:
         """Creates a combined research task for attractions and local insights"""
         return Task(
             config=self.tasks_data["research_task"],
-            agent=self.researcher(),
-            output_schema=List[Attraction]
+            agent=self.researcher()
         )
     
     @task
