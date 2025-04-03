@@ -37,8 +37,7 @@ class TravelPlannerCrew:
     def planner(self) -> Agent:
         """Creates a planner agent that uses the research data to craft an itinerary"""
         return Agent(
-            config=self.agents_data["planner"],
-            tools=[self.search_tool]
+            config=self.agents_data["planner"]
         )
     
     @task
