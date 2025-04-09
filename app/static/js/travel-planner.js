@@ -21,7 +21,7 @@ document.getElementById('tripForm').addEventListener('submit', async function(e)
             // Display the itinerary
             let html = '<div class="itinerary">';
             if (data.daily_plans && Array.isArray(data.daily_plans)) {
-                data.daily_plans.forEach((day, index) => {
+                data.daily_plans.forEach((day) => {
                     html += `
                         <div class="day-plan mb-4">
                             <h6>Day ${day.day_number}</h6>
