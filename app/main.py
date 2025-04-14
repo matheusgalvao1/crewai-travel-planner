@@ -1,36 +1,42 @@
-import json
-from travel_planner_crew import TravelPlannerCrew
+from flask import Flask, render_template, request, jsonify
+from travel_planner.travel_planner_crew import TravelPlannerCrew
 
-# Create the crew without parameters
-travel_crew = TravelPlannerCrew()
+app = Flask(__name__)
 
-# Run the crew and pass inputs only during kickoff
-result = travel_crew.travel_crew().kickoff(inputs={
-    "city": "Porto",
-    "days": 2,
-    "num_attractions": 3
-})
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-# Extract outputs from the crew result
-raw_output = result.raw            # Unstructured full text output
-json_output = result.json_dict     # JSON output as a dictionary (if available)
-pydantic_output = result.pydantic  # Parsed and validated output (TravelItinerary)
+@app.route('/plan', methods=['POST'])
+def plan_trip():
+    try:
+        # Get form data
+        city = request.form.get('city')
+        days = int(request.form.get('days'))
+        attractions_per_day = int(request.form.get('attractions_per_day'))
 
-# Print raw output
-print("=== Raw Output ===")
-print(raw_output)
+        # Calculate total attractions needed
+        total_attractions = days * attractions_per_day
 
-# Print JSON output if available
-print("\n=== JSON Output ===")
-if json_output:
-    print(json.dumps(json_output, indent=2))
-else:
-    print("No JSON output available.")
+        # Create the crew and run it
+        try:
+            travel_crew = TravelPlannerCrew()
+            result = travel_crew.travel_crew().kickoff(inputs={
+                "city": city,
+                "days": days,
+                "attractions_per_day": attractions_per_day,
+                "total_attractions": total_attractions
+            })
+        except Exception as e:
+            return jsonify({"error": f"Error generating travel plan: {str(e)}"}), 500
 
-# Print Pydantic output if available
-print("\n=== Pydantic Output ===")
-if pydantic_output:
-    # pydantic_output is a TravelItinerary object; you can access its attributes directly.
-    print(pydantic_output)
-else:
-    print("No Pydantic output available.")
+        # Return the pydantic output in JSON format
+        if result.pydantic:
+            return jsonify(result.pydantic.model_dump())
+        return jsonify({"error": "No travel itinerary generated"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=3000, debug=True)
